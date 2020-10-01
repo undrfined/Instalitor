@@ -1,0 +1,15 @@
+@import "Vars";
+
+.button {
+  background-color: $button_background_color;
+  color: $button_foreground_color;
+  border-radius: $form_border_radius;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+
+  &[disabled] {
+    opacity: 0.6;
+    cursor: none;
+  }
+}
