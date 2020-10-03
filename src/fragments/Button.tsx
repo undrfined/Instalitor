@@ -1,5 +1,4 @@
 import React from "react";
-import "../scss/Button.scss";
 
 type ButtonProps = {
     text: string,

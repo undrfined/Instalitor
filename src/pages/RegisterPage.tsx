@@ -1,18 +1,13 @@
-import React, {ChangeEvent, useState} from "react";
+import React, {useState} from "react";
 import instagram_logo_text from "../instagram_logo_text.svg";
 import {Input} from "../fragments/Input";
 import {Button} from "../fragments/Button";
 import {FirebaseInstance} from "../Firebase";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCamera, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
+import PhotoPicker from "../fragments/PhotoPicker";
 
-type RegisterPageProps = {
-    onSwitchLogin?: () => void
-}
-export default function RegisterPage(
-    {
-        onSwitchLogin
-    }: RegisterPageProps) {
+
+export default function RegisterPage() {
     const [errorMessage, setErrorMessage] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -47,6 +42,7 @@ export default function RegisterPage(
                         photoURL: url,
                         displayName: `${firstName} ${lastName}`
                     }).then(() => {
+
                         // TODO should update image
                     })
                 })
@@ -58,30 +54,17 @@ export default function RegisterPage(
         })
     }
 
-    function selectPhoto(event: ChangeEvent<HTMLInputElement>) {
-        console.log(event.target.files);
-        const files = event.target.files
-        if (files !== null && files.length === 1) {
-            setPhoto(URL.createObjectURL(files[0]))
-        }
-    }
-
     return <div className="form register-form">
         <img src={instagram_logo_text} className="logo" alt="logo"/>
         {errorMessage && <p className="error">{errorMessage}</p>}
-        <div className="add-photo" style={{
-            backgroundImage: `url(${photo})`
-        }}>
-            <input type="file" name="myImage" onChange={selectPhoto} accept="image/png, image/jpeg"/>
-            <FontAwesomeIcon icon={faPlus}/>
-        </div>
+        <PhotoPicker onPhotoChanged={setPhoto}/>
         <Input hint={"First Name"} type={"text"} onChange={setFirstName}/>
         <Input hint={"Last Name"} type={"text"} onChange={setLastName}/>
         <Input hint={"Email"} type={"email"} onChange={setEmail}/>
         <Input hint={"Password"} type={"password"} onChange={setPassword}/>
         <Button text={loading ? "Please wait..." : "Create account"} disabled={loading} onClick={performRegister}/>
-        <span className="hint" onClick={onSwitchLogin}>
+        <Link to={"/login"} className="hint">
             Already have an account?
-        </span>
+        </Link>
     </div>
 }

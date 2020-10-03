@@ -1,0 +1,26 @@
+@import "Vars";
+
+.content.feed {
+  justify-content: flex-start;
+
+  .new-posts {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: $button_background_color;
+    color: $button_foreground_color;
+    border-radius: 20px;
+    padding: 10px;
+    transition: 0.25s ease-in-out transform;
+
+    &.hidden {
+      transform: translateY(-150%) translateX(-50%);
+    }
+  }
+
+  .loading {
+    text-align: center;
+    font-size: 1.5em;
+    margin: 50px 0 100px 0;
+  }
+}

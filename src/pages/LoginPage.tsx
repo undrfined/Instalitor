@@ -4,15 +4,10 @@ import {Input} from "../fragments/Input";
 import {Button} from "../fragments/Button";
 import {FirebaseInstance} from "../Firebase";
 import firebase from "firebase";
+import {Link} from "react-router-dom";
 
-type LoginPageProps = {
-    onSwitchLogin?: () => void
-}
 
-export default function LoginPage(
-    {
-        onSwitchLogin
-    }: LoginPageProps) {
+export default function LoginPage() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -63,8 +58,8 @@ export default function LoginPage(
         <div className="hr"/>
         <Button text={"Log In With Google"} disabled={loading} onClick={performLoginGoogle}/>
         <Button text={"Log In With Facebook"} disabled={loading} onClick={performLoginFacebook}/>
-        <span className="hint" onClick={onSwitchLogin}>
+        <Link to={"/register"} className="hint">
             New to Instagram?
-        </span>
+        </Link>
     </div>
 }

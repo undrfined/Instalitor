@@ -1,0 +1,54 @@
+@import "Vars";
+
+.header {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+  height: 64px;
+  background-color: $form_background_color;
+  box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+
+  >.logo-wrapper {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
+    display: flex;
+
+    >.logo {
+      width: 120px;
+      object-fit: contain;
+    }
+  }
+
+  .add-post {
+    font-size: 24px;
+    margin-left: 16px;
+  }
+
+  .profile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-self: flex-end;
+    margin-right: 16px;
+
+    @include mobile {
+      >.name {
+        display: none;
+      }
+    }
+
+    >.profile-image {
+      border-radius: 100%;
+      width: 32px;
+      height: 32px;
+      margin-left: 10px;
+    }
+  }
+}

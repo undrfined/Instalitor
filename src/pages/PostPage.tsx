@@ -1,10 +1,7 @@
-import React, {useState} from "react";
-import "../scss/Main.scss";
+import React from "react";
 import instagram_logo_text from "../instagram_logo_text.svg";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCamera} from "@fortawesome/free-solid-svg-icons";
-import {Post} from "./MainPage";
-
 
 export class PostPage extends React.Component<{}, {}> {
     render() {
@@ -15,7 +12,6 @@ export class PostPage extends React.Component<{}, {}> {
                     <img src={instagram_logo_text} className="logo" alt="logo"/>
                 </header>
                 <main>
-                    <Post/>
                     {/*<div className="photos">*/}
                     {/*    <Photo/>*/}
                     {/*    <Photo/>*/}
@@ -37,6 +33,7 @@ export class PostPage extends React.Component<{}, {}> {
                     {/*    <Photo/>*/}
                     {/*    <Photo/>*/}
                     {/*</div>*/}
+
                 </main>
             </div>
         );

@@ -1,5 +1,4 @@
 import React, {ChangeEvent, useState} from "react";
-import "./../scss/Input.scss";
 
 type InputProps = {
     hint?: string,

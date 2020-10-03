@@ -1,9 +1,13 @@
-import { combineReducers } from 'redux'
-import todos from './Todos'
-import user from "./User";
-// import visibilityFilter from './visibilityFilter'
+import {combineReducers} from "redux";
+import posts, {PostsState} from "./posts";
+import users, {UsersState} from "./users";
+
+export type RootState = {
+    posts: PostsState,
+    users: UsersState
+}
 
 export default combineReducers({
-    todos,
-    user
+    posts,
+    users
 })

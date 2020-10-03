@@ -5,23 +5,43 @@ import {FirebaseInstance} from "./Firebase";
 import MainPage from "./pages/MainPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import { Switch, Route, Redirect } from 'react-router-dom'
+import Modal from "./fragments/Modal";
 
 
 function App() {
-    const [user] = useAuthState(FirebaseInstance.auth);
-    const [isRegistering, setIsRegistering] = useState(false)
+    const [user, loading] = useAuthState(FirebaseInstance.auth);
 
     return (
         <div className="app">
-            {!user ? (isRegistering ?
-                <RegisterPage onSwitchLogin={() => setIsRegistering(!isRegistering)}/> :
-                <LoginPage onSwitchLogin={() => setIsRegistering(!isRegistering)}/>) :
-                <MainPage/>}
-            {/*<a onClick={_ => FirebaseInstance.auth.signOut()}>sign out</a>*/}
-            {/*<LoginPage/>*/}
-            {/*<RegisterPage/>*/}
-            {/*<MainPage/>*/}
-            {/*<PostPage/>*/}
+            <Modal/>
+            {loading ? null : <Switch>
+                <Route exact path='/login' render={({location}) =>
+                    !user ? <LoginPage/> : <Redirect
+                        to={{
+                            pathname: "/",
+                            state: {from: location}
+                        }}
+                    />
+                }/>
+                <Route exact path='/register' render={({location}) =>
+                    !user ? <RegisterPage/> : <Redirect
+                        to={{
+                            pathname: "/",
+                            state: {from: location}
+                        }}
+                    />
+                }/>
+                <Route path='/' render={({location}) =>
+                    !!user ? <MainPage/> : <Redirect
+                        to={{
+                            pathname: "/login",
+                            state: {from: location}
+                        }}
+                    />
+                }/>
+
+            </Switch>}
         </div>
     );
 }

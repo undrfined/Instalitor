@@ -1,0 +1,22 @@
+.content.profile-page {
+  display: flex;
+  flex-direction: row;
+
+  >.left {
+    margin-left: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    >.top {
+      font-size: 1.5em;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .display-name, .label {
+        margin-right: 8px;
+      }
+    }
+  }
+}

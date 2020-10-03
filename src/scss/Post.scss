@@ -1,0 +1,70 @@
+@import "Vars";
+
+.post {
+  flex-shrink: 0;
+  overflow: hidden;
+  margin-top: 10px;
+
+  //&.liked {
+  //  transition: 1s ease-in-out all;
+  //  filter: brightness(0.8);
+  //}
+
+  .post-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 10px;
+
+    .avatar {
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      margin-left: 16px;
+      object-fit: cover;
+    }
+
+    .username {
+      margin-left: 10px;
+      font-weight: 500;
+    }
+
+    .more {
+      font-size: 1.1em;
+      margin-left: auto;
+      cursor: pointer;
+      margin-right: 16px;
+    }
+  }
+
+  >img {
+    width: 600px;
+    height: 600px;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    overflow: hidden;
+  }
+
+  .footer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .like {
+      width: 32px;
+      height: 32px;
+      font-size: 1.5em;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      &.liked {
+        color: $error_foreground_color;
+      }
+    }
+  }
+}

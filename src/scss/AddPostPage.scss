@@ -1,0 +1,17 @@
+.content {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+.add-post-page {
+  display: flex;
+  flex-direction: column;
+  height: auto !important;
+  width: 700px;
+  justify-items: center;
+  align-items: center;
+
+  >* {
+    margin-top: 10px;
+  }
+}
