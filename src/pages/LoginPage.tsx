@@ -2,64 +2,51 @@ import React, {useState} from "react";
 import instagram_logo_text from "../instagram_logo_text.svg";
 import {Input} from "../fragments/Input";
 import {Button} from "../fragments/Button";
-import {FirebaseInstance} from "../Firebase";
 import firebase from "firebase";
-import {Link} from "react-router-dom";
+import {userActions} from "../actions/UserActions";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../reducers";
+import { useHistory } from "react-router-dom";
 
 
 export default function LoginPage() {
-    const [errorMessage, setErrorMessage] = useState(null)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [loading, setLoading] = useState(false)
+
+    const users = useSelector((state: RootState) => state.users)
+    const loading = users.authorizationStarted
+    const errorMessage = users.authorizationError
+    const dispatch = useDispatch()
+    const history = useHistory()
+
 
     function performLoginGoogle() {
-        setLoading(true)
-
-        FirebaseInstance.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(result => {
-            console.log(result.user?.toJSON?.())
-        }).catch(error => {
-            setErrorMessage(error.message)
-        }).finally(() => {
-            setLoading(false)
-        })
+        dispatch(userActions.signInWithPopup(new firebase.auth.GoogleAuthProvider()))
     }
 
     function performLoginFacebook() {
-        setLoading(true)
-
-        FirebaseInstance.auth.signInWithPopup(new firebase.auth.FacebookAuthProvider()).then(result => {
-            console.log(result.user?.toJSON?.())
-        }).catch(error => {
-            setErrorMessage(error.message)
-        }).finally(() => {
-            setLoading(false)
-        })
+        dispatch(userActions.signInWithPopup(new firebase.auth.FacebookAuthProvider()))
     }
 
     function performLogin() {
-        setLoading(true)
-
-        FirebaseInstance.auth.signInWithEmailAndPassword(email, password).then(result => {
-            console.log(result.user?.toJSON?.())
-        }).catch(error => {
-            setErrorMessage(error.message)
-        }).finally(() => {
-            setLoading(false)
-        })
+        dispatch(userActions.signInWithEmailAndPassword(email, password))
     }
 
     return <div className="form login-form">
         <img src={instagram_logo_text} className="logo" alt="logo"/>
         {errorMessage && <p className="error">{errorMessage}</p>}
-        <Input hint={"Email"} type={"email"} onChange={setEmail}/>
-        <Input hint={"Password"} type={"password"} onChange={setPassword}/>
+        <Input hint={"Email"} disabled={loading} type={"email"} onChange={setEmail}/>
+        <Input hint={"Password"} disabled={loading} type={"password"} onChange={setPassword}/>
         <Button text={loading ? "Please wait..." : "Log In"} disabled={loading} onClick={performLogin}/>
         <div className="hr"/>
         <Button text={"Log In With Google"} disabled={loading} onClick={performLoginGoogle}/>
         <Button text={"Log In With Facebook"} disabled={loading} onClick={performLoginFacebook}/>
-        <Link to={"/register"} className="hint">
+        <a onClick={() => {
+            if(loading) return
+            dispatch(userActions.authorizeRestart())
+            history.push("/register")
+        }}  className="hint">
             New to Instagram?
-        </Link>
+        </a>
     </div>
 }

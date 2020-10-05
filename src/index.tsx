@@ -10,6 +10,7 @@ import {composeWithDevTools} from "redux-devtools-extension";
 import { BrowserRouter } from 'react-router-dom';
 
 import "./scss/Button.scss";
+import "./scss/Avatar.scss";
 import "./scss/Input.scss";
 import "./scss/PhotoPicker.scss";
 import "./scss/Post.scss";
@@ -21,11 +22,21 @@ import "./scss/LoginPage.scss";
 import "./scss/FeedPage.scss";
 import "./scss/AddPostPage.scss";
 import "./scss/ProfilePage.scss";
+import {postActions} from "./actions/PostActions";
 
-const store = createStore(rootReducer, composeWithDevTools(
-    applyMiddleware(thunkMiddleware),
-    // other store enhancers if any
+const composeEnhancers = composeWithDevTools(
+    {
+        trace: true,
+    })
+
+const store = createStore(rootReducer, composeEnhancers(
+    applyMiddleware(thunkMiddleware)
 ))
+
+// @ts-ignore
+store.dispatch(postActions.subscribeToPostUpdates())
+// @ts-ignore
+store.dispatch(postActions.fetchNextPosts())
 
 ReactDOM.render(
   <React.StrictMode>

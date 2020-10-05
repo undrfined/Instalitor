@@ -2,69 +2,55 @@ import React, {useState} from "react";
 import instagram_logo_text from "../instagram_logo_text.svg";
 import {Input} from "../fragments/Input";
 import {Button} from "../fragments/Button";
-import {FirebaseInstance} from "../Firebase";
-import {Link} from "react-router-dom";
 import PhotoPicker from "../fragments/PhotoPicker";
+import {userActions} from "../actions/UserActions";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../reducers";
+import { useHistory } from "react-router-dom";
 
 
 export default function RegisterPage() {
-    const [errorMessage, setErrorMessage] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
-    const [photo, setPhoto] = useState("")
-    const [loading, setLoading] = useState(false)
+    const [photo, setPhoto] = useState<Blob | undefined>(undefined)
+
+    const users = useSelector((state: RootState) => state.users)
+    const errorMessage = users.authorizationError
+    const loading = users.authorizationStarted
+    const dispatch = useDispatch()
+    const history = useHistory()
 
     function performRegister() {
-        setLoading(true)
-
         if (firstName.trim().length === 0) {
-            setErrorMessage("First Name is invalid")
-            setLoading(false)
+            dispatch(userActions.authorizeError("First Name is invalid"))
             return
         }
 
         if (lastName.trim().length === 0) {
-            setErrorMessage("Last Name is invalid")
-            setLoading(false)
+            dispatch(userActions.authorizeError("Last Name is invalid"))
             return
         }
 
-        FirebaseInstance.auth.createUserWithEmailAndPassword(email, password).then(async () => {
-            if(photo !== "") {
-                let user = FirebaseInstance.auth.currentUser;
-                const storageRef = FirebaseInstance.storage.ref(`${user?.uid}/profilePicture/latest`)
-                const task = storageRef.put(await fetch(photo).then(r => r.blob()))
-                task.then(async result => {
-                    const url = await result.ref.getDownloadURL()
-                    user?.updateProfile({
-                        photoURL: url,
-                        displayName: `${firstName} ${lastName}`
-                    }).then(() => {
-
-                        // TODO should update image
-                    })
-                })
-            }
-        }).catch(error => {
-            setErrorMessage(error.message)
-        }).finally(() => {
-            setLoading(false)
-        })
+        dispatch(userActions.createUserWithEmailAndPassword(email, password, `${firstName} ${lastName}`, photo))
     }
 
     return <div className="form register-form">
         <img src={instagram_logo_text} className="logo" alt="logo"/>
         {errorMessage && <p className="error">{errorMessage}</p>}
-        <PhotoPicker onPhotoChanged={setPhoto}/>
+        <PhotoPicker onPhotoChanged={setPhoto} disabled={loading}/>
         <Input hint={"First Name"} type={"text"} onChange={setFirstName}/>
         <Input hint={"Last Name"} type={"text"} onChange={setLastName}/>
         <Input hint={"Email"} type={"email"} onChange={setEmail}/>
         <Input hint={"Password"} type={"password"} onChange={setPassword}/>
         <Button text={loading ? "Please wait..." : "Create account"} disabled={loading} onClick={performRegister}/>
-        <Link to={"/login"} className="hint">
+        <a onClick={() => {
+            if(loading) return
+            dispatch(userActions.authorizeRestart())
+            history.push("/login")
+        }} className="hint">
             Already have an account?
-        </Link>
+        </a>
     </div>
 }

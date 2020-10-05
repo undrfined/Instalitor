@@ -8,6 +8,12 @@
   padding: 8px;
   cursor: pointer;
 
+  &.grey {
+    background-color: #fafafa;
+    border: 1px solid #dadada;
+    color: black;
+  }
+
   &[disabled] {
     opacity: 0.6;
     cursor: none;

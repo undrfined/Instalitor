@@ -24,7 +24,15 @@ body, html {
   align-items: center;
 }
 
+a {
+  color: black;
+}
 
+.error {
+  color: $error_foreground_color;
+  text-align: center;
+  font-size: 0.8em;
+}
 
 .form {
   background-color: $form_background_color;
@@ -40,11 +48,6 @@ body, html {
     height: 50px;
   }
 
-  .error {
-    color: $error_foreground_color;
-    text-align: center;
-    font-size: 0.8em;
-  }
 
   .hint {
     cursor: pointer;

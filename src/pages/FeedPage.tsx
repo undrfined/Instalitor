@@ -1,8 +1,9 @@
 import {Post} from "../fragments/main/Post";
-import React, {useEffect, useRef} from "react";
+import React, {useRef} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../reducers";
-import {postActions} from "../actions";
+import {postActions} from "../actions/PostActions";
+import {Link} from "react-router-dom";
 
 export default function FeedPage() {
     const posts = useSelector((state: RootState) => state.posts)
@@ -28,16 +29,13 @@ export default function FeedPage() {
         }
     }
 
-    useEffect(() => {
-        dispatch(postActions.subscribeToNewPosts())
-        fetchNextPage()
-    }, [])
-
     return <div className="content feed" ref={scrollableRef} onScroll={posts.isAllFetched ? undefined : onScroll}>
         <div className={`new-posts ${posts.hasNewPosts ? "" : "hidden"}`} onClick={showNewPosts}>New posts</div>
         {posts.posts.map(post => {
             return <Post key={post.id} post={post}/>
         })}
-        <span className="loading">{!posts.isAllFetched ? "Loading more posts..." : "All done!"}</span>
+        <span className="loading">{!posts.isAllFetched ? "Loading more posts..." : <Link to="/add">
+            Add Post
+        </Link>}</span>
     </div>
 }

@@ -1,40 +1,42 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import PhotoPicker from "../fragments/PhotoPicker";
 import {Input} from "../fragments/Input";
 import {Button} from "../fragments/Button";
-import {FirebaseInstance} from "../Firebase";
-import { useHistory } from "react-router-dom";
-import {nanoid} from "nanoid";
+import {useHistory} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {postActions} from "../actions/PostActions";
+import {RootState} from "../reducers";
 
 export default function AddPostPage() {
-    const [photo, setPhoto] = useState("")
+    const [photo, setPhoto] = useState<Blob | undefined>(undefined)
     const [caption, setCaption] = useState("")
-    const [loading, setLoading] = useState(false)
+
     const history = useHistory()
+    const dispatch = useDispatch()
+    const posts = useSelector((state: RootState) => state.posts)
+
+    const loading = posts.postAddStarted
+    const errorMessage = posts.postAddError
 
     async function post() {
-        setLoading(true)
-        // TODO move logic to action?
-        const storageRef = FirebaseInstance.storage.ref(`post/${nanoid()}`)
-        const task = storageRef.put(await fetch(photo).then(r => r.blob()))
-        task.then(async result => {
-            const url = await result.ref.getDownloadURL()
-            FirebaseInstance.database.ref().child('posts').push({
-                "likedBy": [],
-                "image": url,
-                "caption": caption,
-                "postedBy": FirebaseInstance.auth.currentUser?.uid,
-                "comments": [],
-                "date": +new Date()
-            }).then(() => {
-                history.push("/")
-            })
-
-        })
+        if (photo) {
+            dispatch(postActions.addPost(photo, caption))
+        } else {
+            dispatch(postActions.addPostError("No photo provided"))
+        }
     }
+
+    useEffect(() => {
+        if (posts.postAdded) {
+            history.push("/")
+            dispatch(postActions.resetPostError())
+        }
+    })
+
     return <div className="content">
-        <PhotoPicker onPhotoChanged={setPhoto} big/>
-        <Input hint="Caption (optional)" onChange={setCaption}/>
-        <Button text="Post" onClick={post}/>
+        {errorMessage && <p className="error">{errorMessage}</p>}
+        <PhotoPicker onPhotoChanged={setPhoto} big disabled={loading}/>
+        <Input hint="Caption (optional)" disabled={loading} onChange={setCaption}/>
+        <Button text="Post" disabled={loading} onClick={post}/>
     </div>
 }

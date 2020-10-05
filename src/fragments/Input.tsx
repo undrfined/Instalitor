@@ -4,6 +4,7 @@ type InputProps = {
     hint?: string,
     defaultValue?: string,
     type?: string,
+    disabled?: boolean,
     onChange?: (value: string) => void
 }
 
@@ -12,6 +13,7 @@ export function Input(
         hint = "",
         defaultValue = "",
         type = "text",
+        disabled = false,
         onChange
     }: InputProps) {
     const [value, setValue] = useState(defaultValue)
@@ -22,6 +24,6 @@ export function Input(
     }
 
     return <label className="label">
-        <input type={type} value={value} placeholder={hint} onInput={onInput}/>
+        <input type={type} disabled={disabled} value={value} placeholder={hint} onInput={onInput}/>
     </label>
 }

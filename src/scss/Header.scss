@@ -12,6 +12,11 @@
   justify-content: space-between;
   align-items: center;
 
+  a {
+    text-decoration: none;
+    color: black;
+  }
+
 
   >.logo-wrapper {
     position: absolute;
@@ -44,10 +49,7 @@
       }
     }
 
-    >.profile-image {
-      border-radius: 100%;
-      width: 32px;
-      height: 32px;
+    >.avatar {
       margin-left: 10px;
     }
   }

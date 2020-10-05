@@ -1,12 +1,21 @@
 import {DbPost} from "../Types";
 import {
+    ADD_POST,
+    ADD_POST_ERROR,
+    ADD_POST_STARTED,
+    ADDED_COMMENT,
     ALL_FETCHED,
     FETCH_NEXT_POSTS,
     INVALIDATE_POSTS,
-    NEW_POSTS_ADDED, POST_DELETED,
+    NEW_POSTS_ADDED,
+    POST_CHANGED,
+    POST_DELETED,
     PostActionTypes,
-    SET_POST_LIKE, START_LOADING, SUBSCRIBE_TO_NEW_POSTS
-} from "../actions";
+    RESET_POST_ERROR,
+    SET_POST_LIKE,
+    START_LOADING,
+    SUBSCRIBE_TO_NEW_POSTS
+} from "../actions/PostActions";
 import {FirebaseInstance} from "../Firebase";
 
 export type PostsState = {
@@ -16,7 +25,10 @@ export type PostsState = {
     latestKey?: string,
     hasNewPosts: boolean,
     newPosts: DbPost[],
-    subscribed: boolean
+    subscribed: boolean,
+    postAdded: boolean,
+    postAddStarted: boolean,
+    postAddError?: string
 };
 
 const postsInitialState: PostsState = {
@@ -25,7 +37,9 @@ const postsInitialState: PostsState = {
     isAllFetched: false,
     hasNewPosts: false,
     subscribed: false,
-    newPosts: []
+    newPosts: [],
+    postAdded: false,
+    postAddStarted: false
 }
 
 export default (state: PostsState = postsInitialState, action: PostActionTypes): PostsState => {
@@ -43,11 +57,47 @@ export default (state: PostsState = postsInitialState, action: PostActionTypes):
                 isAllFetched: true,
                 isLoading: false
             }
+        case ADD_POST_STARTED:
+            return {
+                ...state,
+                postAddStarted: true
+            }
+        case ADD_POST:
+            return {
+                ...state,
+                postAdded: true,
+                postAddError: undefined
+            }
+        case ADD_POST_ERROR:
+            return {
+                ...state,
+                postAdded: false,
+                postAddError: action.error
+            }
+        case RESET_POST_ERROR:
+            return {
+                ...state,
+                postAdded: false,
+                postAddStarted: false,
+                postAddError: undefined
+            }
         case POST_DELETED:
             return {
                 ...state,
                 newPosts: state.newPosts.filter(post => post.id !== action.postId),
                 posts: state.posts.filter(post => post.id !== action.postId),
+            }
+        case ADDED_COMMENT:
+            return {
+                ...state,
+                newPosts: state.newPosts.map(post => post.id !== action.postId ? post : {
+                    ...post,
+                    comments: [...post.comments, action.comment]
+                }),
+                posts: state.posts.filter(post => post.id !== action.postId ? post : {
+                    ...post,
+                    comments: [...post.comments, action.comment]
+                }),
             }
         case INVALIDATE_POSTS:
             return {
@@ -57,14 +107,21 @@ export default (state: PostsState = postsInitialState, action: PostActionTypes):
                 hasNewPosts: false,
             }
         case SET_POST_LIKE:
-            const arr = state.posts.find(post => post.id === action.postId)!!.likedBy
+            const arr: any = state.posts.find(post => post.id === action.postId)!!.likedBy
             if(action.isLiked) {
-                arr.push(FirebaseInstance.auth.currentUser!!.uid)
+                arr[FirebaseInstance.auth.currentUser!!.uid] = true
             } else {
-                arr.splice(arr.indexOf(FirebaseInstance.auth.currentUser!!.uid), 1)
+                delete arr[FirebaseInstance.auth.currentUser!!.uid]
             }
             return {
                 ...state,
+            }
+        case POST_CHANGED:
+
+            return {
+                ...state,
+                posts: [...state.posts.map(post => post.id !== action.postId ? post : action.post)],
+                newPosts: [...state.newPosts.map(post => post.id !== action.postId ? post : action.post)],
             }
         case NEW_POSTS_ADDED:
             return {
